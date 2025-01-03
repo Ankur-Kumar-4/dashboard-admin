@@ -1,8 +1,10 @@
 const prod =
-  "https://e6vqnxz2h625fiskhcgdca3aza0ejaol.lambda-url.us-east-1.on.aws";
+  "https://2v4hkr6hho5fsiqqq75ct2rzim0fcprd.lambda-url.us-east-1.on.aws";
 
   const ApiEndPoints = {
-    login: `${prod}/login`,
+    login: `${prod}/token`,
+    orders: `${prod}/orders`,
+    signup: `${prod}/register`,
   }
 
   export default ApiEndPoints

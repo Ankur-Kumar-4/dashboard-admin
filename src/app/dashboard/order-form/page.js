@@ -16,6 +16,7 @@ import {
 
 export default function OrderForm() {
   const [formData, setFormData] = useState({
+    date: '',
     patient_name: '',
     mobile_no: '',
     address: '',
@@ -25,6 +26,16 @@ export default function OrderForm() {
     amount: 0,
     discount: 0,
     total_amount: 0,
+    enquiry_made_on: '',
+    payment_made_on: '',
+    mode_of_payment: '',
+    payment_reconciliation_status: '',
+    dispatch_status: '',
+    received_status: '',
+    through: '',
+    awb_docket_no: '',
+    missing_product_during_dispatch: '',
+    remarks: ''
   })
 
   const calculateTotals = (medicines, shipping, discount) => {
@@ -60,10 +71,8 @@ export default function OrderForm() {
     calculateTotals(updatedMedicines, formData.shipping_charges, formData.discount)
   }
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    console.log(formData)
-    // Here you would typically send the data to your API
+  const handleSubmit = async (e) => {
+   
   }
 
   return (
@@ -180,6 +189,246 @@ export default function OrderForm() {
 
       {/* Totals and Submission */}
       <Card>
+      <CardContent className="pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Existing fields */}
+          <div className="space-y-2">
+            <Label htmlFor="patient_name">Patient Name</Label>
+            <Input
+              id="patient_name"
+              required
+              value={formData.patient_name}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, patient_name: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="mobile_no">Mobile Number</Label>
+            <Input
+              id="mobile_no"
+              required
+              value={formData.mobile_no}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, mobile_no: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              required
+              value={formData.address}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, address: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="pincode">Pincode</Label>
+            <Input
+              id="pincode"
+              required
+              value={formData.pincode}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, pincode: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Financial Information */}
+          <div className="space-y-2">
+            <Label htmlFor="shipping_charges">Shipping Charges</Label>
+            <Input
+              id="shipping_charges"
+              type="number"
+              value={formData.shipping_charges}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, shipping_charges: parseFloat(e.target.value) || 0 }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="amount">Amount</Label>
+            <Input
+              id="amount"
+              type="number"
+              value={formData.amount}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="discount">Discount</Label>
+            <Input
+              id="discount"
+              type="number"
+              value={formData.discount}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, discount: parseFloat(e.target.value) || 0 }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="total_amount">Total Amount</Label>
+            <Input
+              id="total_amount"
+              type="number"
+              value={formData.total_amount}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, total_amount: parseFloat(e.target.value) || 0 }))
+              }
+            />
+          </div>
+
+          {/* Order Tracking */}
+          <div className="space-y-2">
+            <Label htmlFor="enquiry_made_on">Enquiry Date</Label>
+            <Input
+              id="enquiry_made_on"
+              type="date"
+              value={formData.enquiry_made_on}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, enquiry_made_on: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="payment_made_on">Payment Date</Label>
+            <Input
+              id="payment_made_on"
+              type="date"
+              value={formData.payment_made_on}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, payment_made_on: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Payment and Shipping Status */}
+          <div className="space-y-2">
+            <Label htmlFor="mode_of_payment">Payment Mode</Label>
+            <Select 
+              value={formData.mode_of_payment}
+              onValueChange={(value) =>
+                setFormData(prev => ({ ...prev, mode_of_payment: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select payment mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cash">Cash</SelectItem>
+                <SelectItem value="upi">UPI</SelectItem>
+                <SelectItem value="card">Card</SelectItem>
+                <SelectItem value="netbanking">Net Banking</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="payment_reconciliation_status">Payment Status</Label>
+            <Select
+              value={formData.payment_reconciliation_status}
+              onValueChange={(value) =>
+                setFormData(prev => ({ ...prev, payment_reconciliation_status: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select payment status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="failed">Failed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="dispatch_status">Dispatch Status</Label>
+            <Select
+              value={formData.dispatch_status}
+              onValueChange={(value) =>
+                setFormData(prev => ({ ...prev, dispatch_status: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select dispatch status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="dispatched">Dispatched</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="received_status">Received Status</Label>
+            <Select
+              value={formData.received_status}
+              onValueChange={(value) =>
+                setFormData(prev => ({ ...prev, received_status: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select received status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="received">Received</SelectItem>
+                <SelectItem value="not_received">Not Received</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Shipping Details */}
+          <div className="space-y-2">
+            <Label htmlFor="through">Shipping Method</Label>
+            <Input
+              id="through"
+              value={formData.through}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, through: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="awb_docket_no">AWB/Docket Number</Label>
+            <Input
+              id="awb_docket_no"
+              value={formData.awb_docket_no}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, awb_docket_no: e.target.value }))
+              }
+            />
+          </div>
+
+          {/* Additional Information */}
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="missing_product_during_dispatch">Missing Products</Label>
+            <Input
+              id="missing_product_during_dispatch"
+              value={formData.missing_product_during_dispatch}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, missing_product_during_dispatch: e.target.value }))
+              }
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="remarks">Remarks</Label>
+            <Input
+              id="remarks"
+              value={formData.remarks}
+              onChange={e =>
+                setFormData(prev => ({ ...prev, remarks: e.target.value }))
+              }
+            />
+          </div>
+        </div>
+        </CardContent>
+      </Card>
+      <Card>
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Add other input fields here as required */}
@@ -205,7 +454,6 @@ export default function OrderForm() {
           </div>
         </CardContent>
       </Card>
-
       <div className="flex justify-end">
         <Button type="submit" size="lg">
           Submit Order
