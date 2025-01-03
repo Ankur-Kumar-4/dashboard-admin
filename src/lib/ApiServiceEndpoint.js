@@ -6,6 +6,7 @@ const prod =
     getorders: `${prod}/orders`,
     signup: `${prod}/register`,
     createorder: `${prod}/orders`,
+    getusers: `${prod}/users/me`
   }
 
   export default ApiEndPoints

@@ -23,239 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
-
-const data = [
-  {
-    date: "2024-01-02",
-    patientName: "John Doe",
-    mobileNo: "1234567890",
-    address: "123 Main St",
-    pincode: "12345",
-    medicines: [
-      { name: "Medicine A", mrp: 100, qty: 2 },
-      { name: "Medicine B", mrp: 150, qty: 1 },
-      { name: "Medicine C", mrp: 200, qty: 3 },
-      { name: "Medicine D", mrp: 120, qty: 1 },
-    ],
-    shippingCharges: 50,
-    amount: 350,
-    discount: 20,
-    totalAmount: 380,
-    modeOfPayment: "Cash",
-    dispatchStatus: "Delivered",
-    enquiryMadeOn: "2024-01-01",
-    paymentMadeOn: "2024-01-02",
-    paymentReconciliationStatus: "Completed",
-    receivedStatus: "Delivered",
-    through: "Courier",
-    awbDocketNo: "AWB123456",
-    missingProductDuringDispatch: "None",
-    remarks: "Delivered on time",
-  },
-  {
-    date: "2024-01-02",
-    patientName: "John Doe",
-    mobileNo: "1234567890",
-    address: "123 Main St",
-    pincode: "12345",
-    medicines: [
-      { name: "Medicine A", mrp: 100, qty: 2 },
-      { name: "Medicine B", mrp: 150, qty: 1 },
-      { name: "Medicine C", mrp: 200, qty: 3 },
-      { name: "Medicine D", mrp: 120, qty: 1 },
-    ],
-    shippingCharges: 50,
-    amount: 350,
-    discount: 20,
-    totalAmount: 380,
-    modeOfPayment: "Cash",
-    dispatchStatus: "Delivered",
-    enquiryMadeOn: "2024-01-01",
-    paymentMadeOn: "2024-01-02",
-    paymentReconciliationStatus: "Completed",
-    receivedStatus: "Delivered",
-    through: "Courier",
-    awbDocketNo: "AWB123456",
-    missingProductDuringDispatch: "None",
-    remarks: "Delivered on time",
-  },
-  {
-    date: "2024-01-02",
-    patientName: "John Doe",
-    mobileNo: "1234567890",
-    address: "123 Main Sfdgfdgdfgdfgdfgd dsfmdsf hsdjfh",
-    pincode: "12345",
-    medicines: [
-      { name: "Medicine ", mrp: 100, qty: 2 },
-      { name: "Medicine ", mrp: 150, qty: 1 },
-      { name: "Medicine ", mrp: 200, qty: 3 },
-      { name: "Medicine ", mrp: 120, qty: 1 },
-    ],
-    shippingCharges: 50,
-    amount: 350,
-    discount: 20,
-    totalAmount: 380,
-    modeOfPayment: "Cash",
-    dispatchStatus: "Delivered",
-    enquiryMadeOn: "2024-01-01",
-    paymentMadeOn: "2024-01-02",
-    paymentReconciliationStatus: "Completed",
-    receivedStatus: "Delivered",
-    through: "Courier",
-    awbDocketNo: "AWB123456",
-    missingProductDuringDispatch: "None",
-    remarks: "Delivered on time",
-  },
-];
-
-const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-  },
-  {
-    accessorKey: "patientName",
-    header: "Patient Name",
-  },
-  {
-    accessorKey: "mobileNo",
-    header: "Mobile No.",
-  },
-  {
-    accessorKey: "address",
-    header: "Address",
-  },
-  {
-    accessorKey: "pincode",
-    header: "Pincode",
-  },
-  {
-    accessorKey: "medicines",
-    header: () => (
-      <div className="w-full">
-        <div className="flex">
-          {Array(4)
-            .fill(0)
-            .map((_, idx) => (
-              <div key={idx} className="min-w-[200px]">
-                <div className="bg-green-500 text-white p-2 text-center border border-gray-300">
-                  Medicine {idx + 1}
-                </div>
-                <div className="grid grid-cols-3">
-                  <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
-                    <div className="font-medium">Name</div>
-                  </div>
-                  <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
-                    <div className="font-medium">MRP</div>
-                  </div>
-                  <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
-                    <div className="font-medium">Qty</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
-    ),
-    cell: ({ row }) => {
-      const medicines = row.getValue("medicines");
-      return (
-        <div className="w-full">
-          <div className="flex">
-            {medicines.map((med, idx) => (
-              <div key={idx} className="min-w-[200px]">
-                <div className="grid grid-cols-3 text-center">
-                  <div className="text-sm border-gray-800">
-                    <div>{med.name}</div>
-                  </div>
-                  <div className="text-sm border-gray-800">
-                    <div>₹{med.mrp}</div>
-                  </div>
-                  <div className="text-sm border-gray-800">
-                    <div>{med.qty}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "shippingCharges",
-    header: "Shipping Charges",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("shippingCharges"));
-      return <div className="text-right">₹{amount.toFixed(2)}</div>;
-    },
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      return <div className="text-right">₹{amount.toFixed(2)}</div>;
-    },
-  },
-  {
-    accessorKey: "discount",
-    header: "Discount",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("discount"));
-      return <div className="text-right">₹{amount.toFixed(2)}</div>;
-    },
-  },
-  {
-    accessorKey: "totalAmount",
-    header: "Total Amount",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("totalAmount"));
-      return <div className="font-medium text-right">₹{amount.toFixed(2)}</div>;
-    },
-  },
-  {
-    accessorKey: "modeOfPayment",
-    header: "Mode of Payment",
-  },
-  {
-    accessorKey: "dispatchStatus",
-    header: "Dispatch Status",
-  },
-  {
-    accessorKey: "receivedStatus",
-    header: "Received Status",
-  },
-  {
-    accessorKey: "through",
-    header: "Through",
-  },
-  {
-    accessorKey: "awbDocketNo",
-    header: "AWB/Docket No",
-  },
-  {
-    accessorKey: "remarks",
-    header: "Remarks",
-  },
-];
+import GeneratePDF from "@/components/pdfGenerate/generateButton";
 
 const OrdersTable = () => {
   const [sorting, setSorting] = React.useState([]);
@@ -263,6 +31,162 @@ const OrdersTable = () => {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [data, setData] = React.useState([]);
+  const maxMedicines = data.length > 0 
+    ? Math.max(...data.map((order) => 
+        order.medicines ? order.medicines.length : 0
+      ), 0) 
+    : 0;
+
+  const columns = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+    },
+    {
+      accessorKey: "date",
+      header: "Date",
+    },
+    {
+      accessorKey: "patientName",
+      header: "Patient Name",
+    },
+    {
+      accessorKey: "mobileNo",
+      header: "Mobile No.",
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+    },
+    {
+      accessorKey: "pincode",
+      header: "Pincode",
+    },
+    {
+      accessorKey: "medicines",
+      header: () => (
+        <div className="w-full">
+          <div className="flex">
+            {Array(maxMedicines)
+              .fill(0)
+              .map((_, idx) => (
+                <div key={idx} className="min-w-[200px]">
+                  <div className="bg-green-500 text-white p-2 text-center border border-gray-300">
+                    Medicine {idx + 1}
+                  </div>
+                  <div className="grid grid-cols-3">
+                    <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
+                      <div className="font-medium">Name</div>
+                    </div>
+                    <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
+                      <div className="font-medium">MRP</div>
+                    </div>
+                    <div className="text-sm border border-gray-300 bg-green-500 text-white p-2">
+                      <div className="font-medium">Qty</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const medicines = row.getValue("medicines");
+        return (
+          <div className="w-full">
+            <div className="flex">
+              {medicines.map((med, idx) => (
+                <div key={idx} className="min-w-[200px]">
+                  <div className="grid grid-cols-3 text-center">
+                    <div className="text-sm border-gray-800">
+                      <div>{med.name}</div>
+                    </div>
+                    <div className="text-sm border-gray-800">
+                      <div>₹{med.mrp}</div>
+                    </div>
+                    <div className="text-sm border-gray-800">
+                      <div>{med.qty}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "shippingCharges",
+      header: "Shipping Charges",
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("shippingCharges"));
+        return <div className="text-right">₹{amount.toFixed(2)}</div>;
+      },
+    },
+    {
+      accessorKey: "amount",
+      header: "Amount",
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("amount"));
+        return <div className="text-right">₹{amount.toFixed(2)}</div>;
+      },
+    },
+    {
+      accessorKey: "discount",
+      header: "Discount",
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("discount"));
+        return <div className="text-right">₹{amount.toFixed(2)}</div>;
+      },
+    },
+    {
+      accessorKey: "totalAmount",
+      header: "Total Amount",
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("totalAmount"));
+        return (
+          <div className="font-medium text-right">₹{amount.toFixed(2)}</div>
+        );
+      },
+    },
+    {
+      accessorKey: "modeOfPayment",
+      header: "Mode of Payment",
+    },
+    {
+      accessorKey: "dispatchStatus",
+      header: "Dispatch Status",
+    },
+    {
+      accessorKey: "receivedStatus",
+      header: "Received Status",
+    },
+    {
+      accessorKey: "through",
+      header: "Through",
+    },
+    {
+      accessorKey: "awbDocketNo",
+      header: "AWB/Docket No",
+    },
+    {
+      accessorKey: "remarks",
+      header: "Remarks",
+    },
+  ];
 
   const getOrders = async () => {
     try {
@@ -277,7 +201,6 @@ const OrdersTable = () => {
         "An unexpected error occurred during signup. Please try again later."
       );
     } finally {
-
     }
   };
 
@@ -471,6 +394,7 @@ const OrdersTable = () => {
           </Button>
         </div>
       </div>
+        <GeneratePDF/>
     </div>
   );
 };
