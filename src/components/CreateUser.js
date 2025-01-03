@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
-export default function NewUserForm({ isOpen, onClose, onSubmit }) {
+export default function NewUserForm({ isOpen, onClose, onSubmit ,isEditUser }) {
   const [userData, setUserData] = useState({
     email: '',
     username: '',
@@ -46,7 +46,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>Configure New User</DialogTitle>
+          <DialogTitle>{isEditUser ? 'Edit User' : 'Create New User'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -80,6 +80,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit }) {
               onChange={handleInputChange}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
             <Select name="role" value={userData.role} onValueChange={handleRoleChange}>
@@ -87,13 +88,14 @@ export default function NewUserForm({ isOpen, onClose, onSubmit }) {
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="guest">Guest</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Order Book">Order Book</SelectItem>
+                <SelectItem value="Management Team">Management Team</SelectItem>
+                <SelectItem value="Delivery Agent">Delivery Agent</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Permissions</Label>
             <div className="flex items-center space-x-2">
               {['read', 'write', 'delete'].map((permission) => (
@@ -107,7 +109,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit }) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
@@ -120,7 +122,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit }) {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Create User</Button>
+            <Button type="submit">{isEditUser ? 'Update User' : 'Create User'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

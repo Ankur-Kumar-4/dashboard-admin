@@ -11,6 +11,7 @@ import ApiEndPoints from '@/lib/ApiServiceEndpoint'
 export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isNewUserFormOpen, setIsNewUserFormOpen] = useState(false)
+  const [isEditUser, setIsEditUser] = useState(false)
   const [tableData, setTableData] = useState([]);
 
   const getOrders = async () => {
@@ -71,13 +72,15 @@ useEffect(() => {
         </div>
       </div>
       <Card>
-        <UserTable searchQuery={searchQuery} tableData={tableData} />
+        <UserTable searchQuery={searchQuery} tableData={tableData} setIsEditUser={setIsEditUser} isEditUser={isEditUser} />
       </Card>
       <CreateUser
-        isOpen={isNewUserFormOpen}
-        onClose={() => setIsNewUserFormOpen(false)}
+        isEditUser={isEditUser}
+        isOpen={isNewUserFormOpen || isEditUser}
+        onClose={() =>{setIsEditUser(false); setIsNewUserFormOpen(false)}}
         onSubmit={handleNewUserSubmit}
       />
+      
     </div>
   )
 }
