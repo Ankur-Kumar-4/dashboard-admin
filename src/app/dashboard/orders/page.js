@@ -24,6 +24,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
 import PDFGenerator from '@/components/pdfGenerate/PdfGenerator';
+import MedicineTable from "@/components/OrderTable";
+
 
 const OrdersTable = () => {
   const [sorting, setSorting] = React.useState([]);
@@ -197,9 +199,7 @@ const OrdersTable = () => {
 
       setData(data);
     } catch (error) {
-      setError(
-        "An unexpected error occurred during signup. Please try again later."
-      );
+     console.error(error);
     } finally {
     }
   };
@@ -278,97 +278,59 @@ const OrdersTable = () => {
         </CardContent>
       </Card>
 
-      <div className="rounded-md border">
-        <div className="flex">
-          {/* Fixed columns container */}
-          <div className="w-auto">
-            <Table>
-              <TableHeader className="h-[77.5px]">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.slice(0, 6).map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length
-                  ? table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                      >
-                        {row
-                          .getVisibleCells()
-                          .slice(0, 6)
-                          .map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
-                      </TableRow>
-                    ))
-                  : null}
-              </TableBody>
-            </Table>
-          </div>
+<MedicineTable data={data}/>
 
-          {/* Scrollable columns container */}
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.slice(6).map((header) => (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
+      {/* <div className="rounded-md border">
+  <div className="overflow-x-auto">
+    <Table className="min-w-max">
+      <TableHeader>
+        <TableRow>
+
+          {table.getHeaderGroups().map((headerGroup) =>
+            headerGroup.headers.slice(0, 6).map((header) => (
+              <TableHead key={header.id} className="sticky left-0 bg-white z-10">
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(header.column.columnDef.header, header.getContext())}
+              </TableHead>
+            ))
+          )}
+
+          {table.getHeaderGroups().map((headerGroup) =>
+            headerGroup.headers.slice(6).map((header) => (
+              <TableHead key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(header.column.columnDef.header, header.getContext())}
+              </TableHead>
+            ))
+          )}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows?.length
+          ? table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+
+                {row.getVisibleCells().slice(0, 6).map((cell) => (
+                  <TableCell key={cell.id} className="sticky left-0 bg-white z-10">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length
-                  ? table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                      >
-                        {row
-                          .getVisibleCells()
-                          .slice(6)
-                          .map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
-                      </TableRow>
-                    ))
-                  : null}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
+
+                {row.getVisibleCells().slice(6).map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          : null}
+      </TableBody>
+    </Table>
+  </div>
+</div> */}
+
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">

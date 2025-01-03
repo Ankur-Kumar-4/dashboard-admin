@@ -12,10 +12,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   section: {
-    width: '48%',
+    width: '48%',  // Adjust to fit content
+    // border: '1pt solid black',
     marginBottom: 20,
   },
   toSection: {
+    // border: '1pt solid black',
     padding: '8pt',
   },
   toLabel: {
@@ -37,13 +39,17 @@ const styles = StyleSheet.create({
     fontSize: 9,
     lineHeight: 1.4,
   },
-  dispatchSection: {},
+  dispatchSection: {
+    
+  },
   dispatchId: {
     textAlign: 'center',
     fontSize: 9,
-    marginTop: '4pt',
+    marginTop: '40pt',
   },
-  packingSlip: {},
+  packingSlip: {
+
+  },
   packingSlipHeader: {
     fontSize: 9,
     fontWeight: 'bold',
@@ -58,6 +64,7 @@ const styles = StyleSheet.create({
     borderBottom: '0.5pt solid black',
     minHeight: '16pt',
     padding: '3pt 0',
+    paddingLeft: '1pt',
   },
   emptyRow: {
     height: '16pt',
@@ -69,12 +76,13 @@ const styles = StyleSheet.create({
     minHeight: '16pt',
     padding: '3pt 0',
     marginTop: '4pt',
+    paddingLeft: '1pt',
   },
   totalRow: {
     fontSize: 9,
     fontWeight: 'bold',
-    marginTop: '4pt',
-    paddingTop: '4pt',
+    paddingLeft: '1pt',
+    paddingVertical: '4pt',
   },
 });
 
