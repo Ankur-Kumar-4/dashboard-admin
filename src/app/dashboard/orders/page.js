@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
-import GeneratePDF from "@/components/pdfGenerate/generateButton";
+import PDFGenerator from '@/components/pdfGenerate/PdfGenerator';
 
 const OrdersTable = () => {
   const [sorting, setSorting] = React.useState([]);
@@ -394,7 +394,7 @@ const OrdersTable = () => {
           </Button>
         </div>
       </div>
-        <GeneratePDF/>
+      <PDFGenerator data={data} />
     </div>
   );
 };
