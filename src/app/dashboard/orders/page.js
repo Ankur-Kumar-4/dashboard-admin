@@ -197,7 +197,7 @@ const OrdersTable = () => {
       const data = await response.data;
       console.log(data);
 
-      setData(data);
+      setData(data.orders);
     } catch (error) {
      console.error(error);
     } finally {

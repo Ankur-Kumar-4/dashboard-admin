@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function MedicineTable({ data = [] }) {
+export default function MedicineTable({ data }) {
   // Find max number of medicines across all orders
   const maxMedicines = Math.max(...data.map((order) => order.medicines.length));
 
   return (
-    <div className="w-full h-[500px] relative rounded-md border overflow-auto">
+    <div className="w-full h-[600px] relative rounded-md border overflow-auto">
       <Table>
-        <TableHeader className=" top-0 bg-white z-30">
+        <TableHeader className="sticky top-0 bg-white z-30">
           <TableRow>
             {/* Fixed columns */}
             <TableHead
