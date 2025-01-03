@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import ApiService from '@/lib/ApiServiceFunction'
+import ApiEndPoints from '@/lib/ApiServiceEndpoint'
 
 export default function OrderForm() {
   const [formData, setFormData] = useState({
@@ -72,6 +74,14 @@ export default function OrderForm() {
   }
 
   const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await ApiService.post(`${ApiEndPoints?.createorder}`, formData);
+      const data = await response.data;
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
    
   }
 

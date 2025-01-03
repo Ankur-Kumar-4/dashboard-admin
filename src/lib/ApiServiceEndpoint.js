@@ -3,8 +3,9 @@ const prod =
 
   const ApiEndPoints = {
     login: `${prod}/token`,
-    orders: `${prod}/orders`,
+    getorders: `${prod}/orders`,
     signup: `${prod}/register`,
+    createorder: `${prod}/orders`,
   }
 
   export default ApiEndPoints

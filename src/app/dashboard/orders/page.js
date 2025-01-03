@@ -262,13 +262,16 @@ const OrdersTable = () => {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = React.useState([]);
 
   const getOrders = async () => {
     try {
-      const response = await ApiService.post(`${ApiEndPoints?.orders}`, {});
+      const response = await ApiService.get(`${ApiEndPoints?.getorders}`, {});
 
       const data = await response.data;
       console.log(data);
+
+      setData(data);
     } catch (error) {
       setError(
         "An unexpected error occurred during signup. Please try again later."
