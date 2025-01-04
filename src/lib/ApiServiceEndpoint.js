@@ -1,12 +1,17 @@
 const prod =
   "https://2v4hkr6hho5fsiqqq75ct2rzim0fcprd.lambda-url.us-east-1.on.aws";
 
-  const ApiEndPoints = {
-    login: `${prod}/token`,
-    getorders: `${prod}/orders`,
-    signup: `${prod}/register`,
-    createorder: `${prod}/orders`,
-    getusers: `${prod}/users/me`
-  }
+const ApiEndPoints = {
+  login: `${prod}/token`,
+  getorders: `${prod}/orders`,
+  signup: `${prod}/register`,
+  createorder: `${prod}/orders`,
+  getusers: `${prod}/users`,
+  resetpassword: `${prod}/users`,
+  updateuser: `${prod}/users`,
+  deleteOrder: `${prod}/orders`,
+  updateOrder: `${prod}/orders`,
+  updateOrderStatus: `${prod}/order_received_update`,
+};
 
-  export default ApiEndPoints
+export default ApiEndPoints;

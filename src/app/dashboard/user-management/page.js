@@ -11,27 +11,24 @@ import ApiEndPoints from '@/lib/ApiServiceEndpoint'
 export default function UserManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isNewUserFormOpen, setIsNewUserFormOpen] = useState(false)
-  const [isEditUser, setIsEditUser] = useState(false)
   const [tableData, setTableData] = useState([]);
 
-  const getOrders = async () => {
+  const getUsers = async () => {
     try {
       const response = await ApiService.get(`${ApiEndPoints?.getusers}`);
 
       const data = await response.data;
       console.log(data);
 
-      setTableData([data]);
+      setTableData(data);
     } catch (error) {
-      setError(
-        "An unexpected error occurred during signup. Please try again later."
-      );
+      console.error(error);
     } finally {
 
     }
   };
 useEffect(() => {
-  getOrders();
+  getUsers();
 }, []);
   const handleNewUserSubmit  = async(userData) => {
     try {
@@ -72,12 +69,11 @@ useEffect(() => {
         </div>
       </div>
       <Card>
-        <UserTable searchQuery={searchQuery} tableData={tableData} setIsEditUser={setIsEditUser} isEditUser={isEditUser} />
+        <UserTable searchQuery={searchQuery} tableData={tableData}  getUsers={getUsers}/>
       </Card>
       <CreateUser
-        isEditUser={isEditUser}
-        isOpen={isNewUserFormOpen || isEditUser}
-        onClose={() =>{setIsEditUser(false); setIsNewUserFormOpen(false)}}
+        isOpen={isNewUserFormOpen}
+        onClose={() =>{ setIsNewUserFormOpen(false)}}
         onSubmit={handleNewUserSubmit}
       />
       

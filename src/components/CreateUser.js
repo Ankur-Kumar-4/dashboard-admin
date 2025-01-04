@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
-export default function NewUserForm({ isOpen, onClose, onSubmit ,isEditUser }) {
+export default function NewUserForm({ isOpen, onClose, onSubmit  }) {
   const [userData, setUserData] = useState({
     email: '',
     username: '',
@@ -46,7 +46,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit ,isEditUser }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>{isEditUser ? 'Edit User' : 'Create New User'}</DialogTitle>
+          <DialogTitle>Create New User</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -122,7 +122,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit ,isEditUser }) {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">{isEditUser ? 'Update User' : 'Create User'}</Button>
+            <Button type="submit">Create User</Button>
           </DialogFooter>
         </form>
       </DialogContent>
