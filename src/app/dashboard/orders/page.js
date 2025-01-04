@@ -28,11 +28,11 @@ import MedicineTable from "@/components/OrderTable";
 
 
 const OrdersTable = () => {
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [columnVisibility, setColumnVisibility] = React.useState({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [data, setData] = React.useState([]);
+  // const [sorting, setSorting] = React.useState([]);
+  // const [columnFilters, setColumnFilters] = React.useState([]);
+  // const [columnVisibility, setColumnVisibility] = React.useState({});
+  // const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = useState([]);
   const maxMedicines = data.length > 0 
     ? Math.max(...data.map((order) => 
         order.medicines ? order.medicines.length : 0
@@ -189,55 +189,92 @@ const OrdersTable = () => {
       header: "Remarks",
     },
   ];
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
-  const getOrders = async () => {
+
+  const getOrders = async (filterParams = {}) => {
     try {
-      const response = await ApiService.get(`${ApiEndPoints?.getorders}`, {});
-
-      const data = await response.data;
+      const formatDate = (date) => {
+        if (!date) return null;
+        const [year, month, day] = date.split("-");
+        return `${day}-${month}-${year}`; // Convert yyyy-MM-dd to dd-MM-yyyy
+      };
+  
+      const params = new URLSearchParams();
+      if (filterParams.fromDate) params.append("from_date", formatDate(filterParams.fromDate));
+      if (filterParams.toDate) params.append("to_date", formatDate(filterParams.toDate));
+  
+      const response = await ApiService.get(
+        `${ApiEndPoints?.getorders}?${params.toString()}`,
+        {}
+      );
+      const data = response.data;
       console.log(data);
-
       setData(data);
     } catch (error) {
-     console.error(error);
-    } finally {
+      console.error(error);
     }
   };
-
+  
   useEffect(() => {
-    getOrders();
+    getOrders(); // Fetch default orders on mount
   }, []);
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
+  
+  const handleFilter = () => {
+    getOrders({ fromDate, toDate }); // Fetch filtered orders
+  };
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   onSortingChange: setSorting,
+  //   onColumnFiltersChange: setColumnFilters,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getPaginationRowModel: getPaginationRowModel(),
+  //   getSortedRowModel: getSortedRowModel(),
+  //   getFilteredRowModel: getFilteredRowModel(),
+  //   onColumnVisibilityChange: setColumnVisibility,
+  //   onRowSelectionChange: setRowSelection,
+  //   state: {
+  //     sorting,
+  //     columnFilters,
+  //     columnVisibility,
+  //     rowSelection,
+  //   },
+  // });
   const [isExpanded, setIsExpanded] = useState(false);
   return (
     <div className="mx-auto py-5 w-[95vw]">
       <div className="flex items-center justify-between py-4">
-        <Input
+      <div className="flex items-center gap-4 mb-4">
+    <Input
+      type="date"
+      value={fromDate}
+      onChange={(e) => setFromDate(e.target.value)}
+      placeholder="From Date"
+    />
+    <Input
+      type="date"
+      value={toDate}
+      onChange={(e) => setToDate(e.target.value)}
+      placeholder="To Date"
+    />
+    <Button onClick={handleFilter}>Find</Button>
+    <PDFGenerator data={data} />
+  </div>
+      {/* rest of the code to display orders */}
+
+
+        {/* <Input
           placeholder="Filter patients..."
           value={table.getColumn("patientName")?.getFilterValue() ?? ""}
           onChange={(event) =>
             table.getColumn("patientName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />
+        /> */}
+
+             
       </div>
 
       {/* <Card className="mb-4">
@@ -282,7 +319,7 @@ const OrdersTable = () => {
 
 
 
-      <PDFGenerator data={data} />
+     
     </div>
   );
 };

@@ -30,13 +30,16 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-
+import {EditOrderDialog }from "@/components/EditOrderDialog";
 
 export default function OrderTable({ data, getOrders }) {
   const [isOpenStatus, setIsOpenStatus] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [receivedStatus, setReceivedStatus] = useState("");
   const [dispatchStatus, setDispatchStatus] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
@@ -64,10 +67,11 @@ export default function OrderTable({ data, getOrders }) {
     return `${month}-${day}-${year}`;
   };
 
-  const handleDelete = async (orderId) => {
+  const handleDelete = async () => {
    try {
     const response = await ApiService.delete(`${ApiEndPoints?.deleteOrder}/${orderId}`);
     toast({ title: "Order deleted successfully!", variant: "success" });
+    setIsDeleteDialogOpen(false);
     getOrders();
    } catch (error) {
     toast({ title: "Error deleting order", variant: "destructive" });
@@ -84,9 +88,25 @@ export default function OrderTable({ data, getOrders }) {
       toast({ title: "Error updating order status", variant: "destructive" });
     }
   };
+  const handleEdit = (order) => {
+    setEditingOrder(order);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditSubmit = async (updatedOrder) => {
+    try {
+      const response = await ApiService.put(`${ApiEndPoints?.updateOrder}/${updatedOrder.id}`, updatedOrder);
+      toast({ title: "Order updated successfully!", variant: "success" });
+      setIsEditDialogOpen(false);
+      getOrders();
+    } catch (error) {
+      toast({ title: "Error updating order", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="w-full relative rounded-md border">
+      
       <div className="overflow-x-auto">
         <Table className="text-xs">
           <TableHeader className="sticky top-0 z-30">
@@ -98,7 +118,7 @@ export default function OrderTable({ data, getOrders }) {
                   position: "sticky",
                   left: 0,
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                  minWidth: "80px",
+                  minWidth: "30px",
                 }}
                 rowSpan={2}
               ></TableHead>
@@ -106,9 +126,9 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-0 bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "80px",
+                  left: "52px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                  minWidth: "120px",
+                  minWidth: "85px",
                 }}
                 rowSpan={2}
               >
@@ -118,7 +138,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[200px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "200px",
+                  left: "137px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "120px",
                 }}
@@ -130,9 +150,9 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[320px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "320px",
+                  left: "255px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                  minWidth: "120px",
+                  minWidth: "90px",
                 }}
                 rowSpan={2}
               >
@@ -142,7 +162,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[400px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "440px",
+                  left: "352px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "120px",
                 }}
@@ -154,7 +174,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[600px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "740px",
+                  left: "552px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "80px",
                 }}
@@ -220,7 +240,7 @@ export default function OrderTable({ data, getOrders }) {
                     position: "sticky",
                     left: 0,
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                    minWidth: "80px",
+                    minWidth: "30px",
                   }}
                 >
                   <DropdownMenu>
@@ -231,9 +251,9 @@ export default function OrderTable({ data, getOrders }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(order.id)}>Edit Order</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEdit(order)}>Edit Order</DropdownMenuItem>
                       <DropdownMenuItem onClick={() =>{ setIsOpenStatus(true); setOrderId(order.id)}}>order received status</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(order.id)}>Delete</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() =>{ setIsDeleteDialogOpen(true); setOrderId(order.id)}}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -241,7 +261,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-0 bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "80px",
+                    left: "52px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "80px",
                   }}
@@ -252,7 +272,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[80px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "200px",
+                    left: "137px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "120px",
                   }}
@@ -263,9 +283,9 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[200px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "320px",
+                    left: "255px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                    minWidth: "100px",
+                    minWidth: "90px",
                   }}
                 >
                   {order.mobile_no}
@@ -274,9 +294,9 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[300px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "440px",
+                    left: "352px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
-                    minWidth: "300px",
+                    minWidth: "200px",
                   }}
                 >
                   {order.address}
@@ -285,7 +305,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[600px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "740px",
+                    left: "552px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "80px",
                   }}
@@ -411,6 +431,33 @@ export default function OrderTable({ data, getOrders }) {
   </DialogFooter>
 </form>
 
+        </DialogContent>
+      </Dialog>
+      <EditOrderDialog
+        isOpen={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        order={editingOrder}
+        onSubmit={handleEditSubmit}
+      />
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleDelete()}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

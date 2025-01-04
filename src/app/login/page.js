@@ -20,14 +20,17 @@ export default function LoginPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const token = localStorage.getItem('access_token');
     if (token) {
       router.push('/dashboard/user-management');
     }
   }, [router]);
-
+  if (!isMounted) return null;
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
