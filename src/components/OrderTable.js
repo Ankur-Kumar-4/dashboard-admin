@@ -128,6 +128,16 @@ export default function OrderTable({ data, getOrders }) {
                   position: "sticky",
                   left: "52px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
+                  minWidth: "30px",
+                }}
+                rowSpan={2}
+              >Field No.</TableHead>
+              <TableHead
+                className="sticky left-0 bg-green-600 text-white border-r z-50"
+                style={{
+                  position: "sticky",
+                  left: "252px",
+                  boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "85px",
                 }}
                 rowSpan={2}
@@ -138,7 +148,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[200px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "137px",
+                  left: "337px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "120px",
                 }}
@@ -150,7 +160,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[320px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "255px",
+                  left: "457px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "90px",
                 }}
@@ -162,8 +172,8 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[400px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "352px",
-                  boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
+                  left: "556px",
+                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "120px",
                 }}
                 rowSpan={2}
@@ -174,7 +184,7 @@ export default function OrderTable({ data, getOrders }) {
                 className="sticky left-[600px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "552px",
+                  left: "755px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "80px",
                 }}
@@ -204,25 +214,46 @@ export default function OrderTable({ data, getOrders }) {
 
               {/* Regular columns */}
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
-                Shipping
+                Shipping Charges
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
-                Amount
+              Amount
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
                 Discount
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
-                Total
+                Total Amount
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              Enquiry Made on
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
                 Payment Status
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              Payment Made On
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              Mode Of Payment
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+                PAYMENT RECONCILATION STATUS
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
                 Dispatch Status
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
-                AWB No.
+              Recieved status 
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              Through
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              AWB / Docket No
+              </TableHead>
+              <TableHead className="bg-green-600 text-white" rowSpan={2}>
+              Missing Product During Dispatch 
               </TableHead>
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
                 Remarks
@@ -252,7 +283,8 @@ export default function OrderTable({ data, getOrders }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEdit(order)}>Edit Order</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() =>{ setIsOpenStatus(true); setOrderId(order.id)}}>order received status</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() =>{ setIsOpenStatus(true); setOrderId(order.id)}}>Delivery Agent</DropdownMenuItem>
+                      <DropdownMenuItem>Management Team</DropdownMenuItem>
                       <DropdownMenuItem onClick={() =>{ setIsDeleteDialogOpen(true); setOrderId(order.id)}}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -263,6 +295,17 @@ export default function OrderTable({ data, getOrders }) {
                     position: "sticky",
                     left: "52px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
+                    minWidth: "200px",
+                  }}
+                >
+                  {order.id}
+                </TableCell>
+                <TableCell
+                  className="sticky left-0 bg-blue-50 border-r z-30"
+                  style={{
+                    position: "sticky",
+                    left: "252px",
+                    boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "80px",
                   }}
                 >
@@ -272,7 +315,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[80px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "137px",
+                    left: "337px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "120px",
                   }}
@@ -283,7 +326,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[200px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "255px",
+                    left: "457px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "90px",
                   }}
@@ -294,7 +337,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[300px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "352px",
+                    left: "556px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "200px",
                   }}
@@ -305,7 +348,7 @@ export default function OrderTable({ data, getOrders }) {
                   className="sticky left-[600px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "552px",
+                    left: "755px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "80px",
                   }}
@@ -343,26 +386,52 @@ export default function OrderTable({ data, getOrders }) {
                 </TableCell>
 
                 {/* Regular cells */}
-                <TableCell className="text-right text-xs">
-                  ₹{order.shipping_charges}
-                </TableCell>
-                <TableCell className="text-right text-xs">
-                  ₹{order.amount}
-                </TableCell>
-                <TableCell className="text-right text-xs">
-                  ₹{order.discount}
-                </TableCell>
-                <TableCell className="text-right text-xs">
-                  ₹{order.total_amount}
-                </TableCell>
-                <TableCell className="text-xs">
-                  {order.payment_reconciliation_status}
-                </TableCell>
-                <TableCell className="text-xs">
-                  {order.dispatch_status}
-                </TableCell>
-                <TableCell className="text-xs">{order.awb_docket_no}</TableCell>
-                <TableCell className="text-xs">{order.remarks}</TableCell>
+                <TableCell className="text-center text-xs min-w-[100px]">
+  ₹{order.shipping_charges}
+</TableCell>
+<TableCell className="text-center text-xs min-w-[100px]">
+  ₹{order.amount}
+</TableCell>
+<TableCell className="text-center text-xs min-w-[100px]">
+  ₹{order.discount}
+</TableCell>
+<TableCell className="text-center text-xs min-w-[100px]">
+  ₹{order.total_amount}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.enquiry_made_on}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.payment_status}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.payment_made_on}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.mode_of_payment}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.payment_reconciliation_status}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.dispatch_status}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.received_status}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.through}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.awb_docket_no}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.missing_product_during_dispatch}
+</TableCell>
+<TableCell className="text-xs min-w-[100px]">
+  {order.remarks}
+</TableCell>
+
               </TableRow>
             ))}
           </TableBody>

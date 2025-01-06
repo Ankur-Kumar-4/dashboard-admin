@@ -21,12 +21,12 @@ const menuItems = [
 ];
 const handleLogout = async () => {
   try {
+    localStorage.removeItem("access_token");
     const response = await ApiService.post(ApiEndPoints.logout, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
     });
-    localStorage.removeItem("access_token");
     window.location.href = "/";
   } catch (error) {
     console.error(error);
@@ -43,7 +43,7 @@ export default function TopNavbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/dashboard">
-                <span className="text-2xl font-bold text-gray-900">My App</span>
+                <span className="text-2xl font-bold text-gray-900">Order Book</span>
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">

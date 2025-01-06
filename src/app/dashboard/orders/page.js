@@ -189,7 +189,7 @@ const OrdersTable = () => {
       header: "Remarks",
     },
   ];
-  const [fromDate, setFromDate] = useState("");
+  const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0]);
   const [toDate, setToDate] = useState("");
 
 
@@ -201,8 +201,13 @@ const OrdersTable = () => {
         return `${day}-${month}-${year}`; // Convert yyyy-MM-dd to dd-MM-yyyy
       };
   
+      // Get today's date in yyyy-MM-dd format
+      const today = new Date().toISOString().split("T")[0];
+  
       const params = new URLSearchParams();
-      if (filterParams.fromDate) params.append("from_date", formatDate(filterParams.fromDate));
+      // Use today's date as default for fromDate
+      params.append("from_date", formatDate(filterParams.fromDate || today));
+      // Append to_date only if it exists
       if (filterParams.toDate) params.append("to_date", formatDate(filterParams.toDate));
   
       const response = await ApiService.get(
@@ -218,12 +223,13 @@ const OrdersTable = () => {
   };
   
   useEffect(() => {
-    getOrders(); // Fetch default orders on mount
+    getOrders(); // Fetch default orders on mount with today's from_date
   }, []);
   
   const handleFilter = () => {
     getOrders({ fromDate, toDate }); // Fetch filtered orders
   };
+  
   // const table = useReactTable({
   //   data,
   //   columns,
@@ -244,9 +250,8 @@ const OrdersTable = () => {
   // });
   const [isExpanded, setIsExpanded] = useState(false);
   return (
-    <div className="mx-auto py-5 w-[95vw]">
-      <div className="flex items-center justify-between py-4">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="mx-auto w-[95vw]">
+      <div className="flex items-center w-80 gap-4 mb-4">
     <Input
       type="date"
       value={fromDate}
@@ -273,9 +278,6 @@ const OrdersTable = () => {
           }
           className="max-w-sm"
         /> */}
-
-             
-      </div>
 
       {/* <Card className="mb-4">
         <CardContent className="p-4">

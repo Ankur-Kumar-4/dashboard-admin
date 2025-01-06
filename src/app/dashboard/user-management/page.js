@@ -34,7 +34,7 @@ useEffect(() => {
     try {
       console.log(userData,"userData");
       const response = await ApiService.post(`${ApiEndPoints?.signup}`, {
-      userData
+      ...userData
       });
 
       const data = await response.data;

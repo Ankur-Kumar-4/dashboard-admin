@@ -158,11 +158,14 @@ const PDFDocument = ({ data }) => (
 
 // Main component
 const PDFGenerator = ({ data }) => {
+  const date = new Date();
+  const fileName = `slip-${date.toLocaleDateString('en-CA')}.pdf`;
+
   return (
     <div className="w-full p-4">
       <PDFDownloadLink
         document={<PDFDocument data={data} />}
-        fileName="packing-slips.pdf"
+        fileName={fileName}
       >
         {({ blob, url, loading, error }) => (
           <button 
