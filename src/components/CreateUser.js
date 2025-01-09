@@ -27,14 +27,14 @@ export default function NewUserForm({ isOpen, onClose, onSubmit  }) {
     setUserData(prev => ({ ...prev, role: value }))
   }
 
-  const handlePermissionChange = (permission) => {
-    setUserData(prev => ({
-      ...prev,
-      permissions: prev.permissions.includes(permission)
-        ? prev.permissions.filter(p => p !== permission)
-        : [...prev.permissions, permission]
-    }))
-  }
+  // const handlePermissionChange = (permission) => {
+  //   setUserData(prev => ({
+  //     ...prev,
+  //     permissions: prev.permissions.includes(permission)
+  //       ? prev.permissions.filter(p => p !== permission)
+  //       : [...prev.permissions, permission]
+  //   }))
+  // }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -90,7 +90,6 @@ export default function NewUserForm({ isOpen, onClose, onSubmit  }) {
               <SelectContent>
                 <SelectItem value="Admin">Admin</SelectItem>
                 <SelectItem value="Order Book">Order Book</SelectItem>
-                <SelectItem value="Management Team">Management Team</SelectItem>
                 <SelectItem value="Delivery Agent">Delivery Agent</SelectItem>
               </SelectContent>
             </Select>

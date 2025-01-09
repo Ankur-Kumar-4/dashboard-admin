@@ -236,64 +236,7 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit }) {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="dispatch_status">Dispatch Status</Label>
-                <Input
-                  id="dispatch_status"
-                  name="dispatch_status"
-                  value={formData.dispatch_status}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="received_status">Received Status</Label>
-                <Input
-                  id="received_status"
-                  name="received_status"
-                  value={formData.received_status}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="through">Through</Label>
-                <Input
-                  id="through"
-                  name="through"
-                  value={formData.through}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <Label htmlFor="awb_docket_no">AWB/Docket No.</Label>
-                <Input
-                  id="awb_docket_no"
-                  name="awb_docket_no"
-                  value={formData.awb_docket_no}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="missing_product_during_dispatch">Missing Product During Dispatch</Label>
-              <Input
-                id="missing_product_during_dispatch"
-                name="missing_product_during_dispatch"
-                value={formData.missing_product_during_dispatch}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label htmlFor="remarks">Remarks</Label>
-              <Textarea
-                id="remarks"
-                name="remarks"
-                value={formData.remarks}
-                onChange={handleChange}
-              />
-            </div>
+            
           </div>
           <DialogFooter>
             <Button type="submit">Save changes</Button>

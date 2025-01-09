@@ -397,7 +397,7 @@ export default function OrderForm() {
 
             <div className="space-y-2">
               <Label htmlFor="payment_reconciliation_status">
-                Payment Status
+              Payment Reconciliation Status
               </Label>
               <Input
                 id="payment_reconciliation_status"

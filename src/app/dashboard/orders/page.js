@@ -1,106 +1,95 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent } from "@/components/ui/card";
 import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
-import PDFGenerator from '@/components/pdfGenerate/PdfGenerator';
+import PDFGenerator from "@/components/pdfGenerate/PdfGenerator";
 import MedicineTable from "@/components/OrderTable";
-
 
 const OrdersTable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const maxMedicines = data.length > 0 
-    ? Math.max(...data.map((order) => 
-        order.medicines ? order.medicines.length : 0
-      ), 0) 
-    : 0;
-
   const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0]);
   const [toDate, setToDate] = useState("");
-
+  const [noDataFound, setNoDataFound] = useState(false);
 
   const getOrders = async (filterParams = {}) => {
     try {
       setIsLoading(true);
+      setNoDataFound(false);
+
       const formatDate = (date) => {
         if (!date) return null;
         const [year, month, day] = date.split("-");
         return `${day}-${month}-${year}`; // Convert yyyy-MM-dd to dd-MM-yyyy
       };
-  
+
       // Get today's date in yyyy-MM-dd format
       const today = new Date().toISOString().split("T")[0];
-  
+
       const params = new URLSearchParams();
       // Use today's date as default for fromDate
       params.append("from_date", formatDate(filterParams.fromDate || today));
       // Append to_date only if it exists
       if (filterParams.toDate) params.append("to_date", formatDate(filterParams.toDate));
-  
+
       const response = await ApiService.get(
         `${ApiEndPoints?.getorders}?${params.toString()}`,
         {}
       );
+
       const data = response.data;
-      console.log(data);
+
+      if (data.length === 0) {
+        setNoDataFound(true);
+      }
+
       setData(data);
       setIsLoading(false);
     } catch (error) {
+      setData([]);
+      setNoDataFound(true);
       setIsLoading(false);
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     getOrders(); // Fetch default orders on mount with today's from_date
   }, []);
-  
+
   const handleFilter = () => {
     getOrders({ fromDate, toDate }); // Fetch filtered orders
   };
+
   return (
     <div className="mx-auto w-[95vw]">
       <div className="flex items-center w-80 gap-4 mb-4">
-    <Input
-      type="date"
-      value={fromDate}
-      onChange={(e) => setFromDate(e.target.value)}
-      placeholder="From Date"
-    />
-    <Input
-      type="date"
-      value={toDate}
-      onChange={(e) => setToDate(e.target.value)}
-      placeholder="To Date"
-    />
-    <Button onClick={handleFilter}>Find</Button>
-    <PDFGenerator data={data} />
-  </div>
-     
+        <Input
+          type="date"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+          placeholder="From Date"
+        />
+        <Input
+          type="date"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+          placeholder="To Date"
+        />
+        <Button onClick={handleFilter}>Find</Button>
+        <PDFGenerator data={data} />
+      </div>
 
       {!isLoading ? (
-        <MedicineTable data={data} getOrders={getOrders} />
+        noDataFound ? (
+          <div className="flex items-center justify-center mt-10">
+            <p className="text-gray-500">No data found for the selected date range.</p>
+          </div>
+        ) : (
+          <MedicineTable data={data} getOrders={getOrders} />
+        )
       ) : (
         <div className="flex items-center justify-center mt-10">
           <svg
@@ -125,10 +114,6 @@ const OrdersTable = () => {
           </svg>
         </div>
       )}
-
-
-
-     
     </div>
   );
 };

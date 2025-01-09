@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2, RefreshCcw } from "lucide-react";
+import { Pencil, Trash2, RefreshCcw ,Loader2} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
 import { useToast } from "@/hooks/use-toast"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function UserTable({
   searchQuery = "",
@@ -33,12 +34,14 @@ export default function UserTable({
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [resetPasswordData, setResetPasswordData] = useState({
     current_password: "",
     new_password: "",
   });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const { toast } = useToast()
+
   // Handle input changes for reset password
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,30 +52,46 @@ export default function UserTable({
   };
 
   // Reset Password submission
-  const handleResetPassword = async(e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    const { current_password, new_password } = resetPasswordData;
+    const { new_password } = resetPasswordData;
     const token = localStorage.getItem("access_token");
 
     if (!token) {
-      throw new Error("No authentication token found");
+      toast({
+        title: "Authentication Error",
+        description: "No authentication token found",
+        variant: "destructive",
+      });
+      return;
     }
 
     try {
-     const response = await ApiService.put(`https://2v4hkr6hho5fsiqqq75ct2rzim0fcprd.lambda-url.us-east-1.on.aws/users/${userId}/reset-password?password_reset=${new_password }`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json", 
-      },
+      setIsLoading(true);
+      await ApiService.put(`https://2v4hkr6hho5fsiqqq75ct2rzim0fcprd.lambda-url.us-east-1.on.aws/users/${userId}/reset-password?password_reset=${new_password}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
-      toast({ title: "Password reset successfully!", variant: "success" });
+      toast({
+        title: "Success",
+        description: "Password reset successfully!",
+        variant: "default",
+      });
+      setIsLoading(false);
+      setIsOpen(false);
     } catch (error) {
-      toast({ title: "An unexpected error occurred. Please try again later.", variant: "destructive" });
+      setIsLoading(false);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+      });
       console.log(error);
     }
 
-    // Reset the dialog and form
     setResetPasswordData({ current_password: "", new_password: "" });
     setIsOpen(false);
   };
@@ -98,7 +117,7 @@ export default function UserTable({
   const handleEditUser = async (e) => {
     e.preventDefault();
   
-    const { email, username, full_name, disabled } = editUserData;
+    const { email, username, full_name, disabled, role } = editUserData;
   
     if (!email || !username || !full_name) {
       toast({ title: "All fields are required", variant: "destructive" });
@@ -110,28 +129,36 @@ export default function UserTable({
       username: username.trim(),
       full_name: full_name.trim(),
       disabled: !!disabled,
+      role: role.trim(),
     };
-  
-    try {
 
   
+    try {
+      setIsLoading(true);
       const response = await ApiService.put(
         `https://2v4hkr6hho5fsiqqq75ct2rzim0fcprd.lambda-url.us-east-1.on.aws/users/${userId}/update-details`, formattedData
 
       );
   
 
-        toast({ title: "User updated successfully!", variant: "success" });
+        toast({
+          title: "Success",
+          description: "User updated successfully!",
+          variant: "default",
+        });
         setIsOpen2(false);
         getUsers();
-        toast({ title: "Failed to update user.", variant: "destructive" });
+      setIsLoading(false);
     } catch (error) {
       console.error("Error updating user:", error);
       toast({ title: "An unexpected error occurred. Please try again.", variant: "destructive" });
+      setIsLoading(false);
     }
   };
   
-
+  const handleRoleChange = (value) => {
+    setEditUserData(prev => ({ ...prev, role: value }))
+  }
   // Filter and sort users
   const filteredAndSortedUsers = Array.isArray(tableData)
     ? [...tableData]
@@ -176,6 +203,7 @@ export default function UserTable({
               {sortConfig.key === "full_name" &&
                 (sortConfig.direction === "asc" ? "↑" : "↓")}
             </TableHead>
+            <TableHead>Role</TableHead>
             <TableHead>Disabled</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -185,6 +213,7 @@ export default function UserTable({
     <TableRow key={user._id}>
       <TableCell>{user?.email || "N/A"}</TableCell>
       <TableCell>{user?.username || "N/A"}</TableCell>
+      <TableCell>{user?.role || "N/A"}</TableCell>
       <TableCell>{user?.full_name || "N/A"}</TableCell>
       <TableCell>
         <Switch checked={user?.disabled || false} />
@@ -244,10 +273,14 @@ export default function UserTable({
               />
             </div>
             <DialogFooter>
-              <Button type="button" onClick={() => setIsOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Confirm</Button>
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </Button>
+              ) : (
+                <Button type="submit">Update User</Button>
+              )}
             </DialogFooter>
           </form>
         </DialogContent>
@@ -292,6 +325,20 @@ export default function UserTable({
         />
       </div>
       <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Select name="role" value={editUserData.role} onValueChange={handleRoleChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Order Book">Order Book</SelectItem>
+                <SelectItem value="Management Team">Management Team</SelectItem>
+                <SelectItem value="Delivery Agent">Delivery Agent</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+      <div className="space-y-2">
         <Label htmlFor="disabled">Disabled</Label>
         <input
           id="disabled"
@@ -311,7 +358,14 @@ export default function UserTable({
         <Button type="button" onClick={() => setIsOpen(false)}>
           Cancel
         </Button>
-        <Button type="submit">Update User</Button>
+        {isLoading ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Updating...
+          </Button>
+        ) : (
+          <Button type="submit">Update User</Button>
+        )}
       </DialogFooter>
     </form>
         </DialogContent>
