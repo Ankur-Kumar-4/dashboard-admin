@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, FileUser, Package, User, MoreVertical } from "lucide-react";
+import { Users, FileUser, Package, User, MoreVertical ,Pill} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ const menuItems = [
   { icon: Package, label: "Orders", href: "/dashboard/orders" },
   { icon: FileUser, label: "Order Form", href: "/dashboard/order-form" },
   { icon: Users, label: "User Management", href: "/dashboard/user-management" },
+  { icon: Pill , label: "Products", href: "/dashboard/products" },
 ];
 const handleLogout = async () => {
   try {

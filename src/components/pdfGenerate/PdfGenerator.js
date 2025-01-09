@@ -146,7 +146,7 @@ const SlipTemplate = ({ data }) => {
 const PDFDocument = ({ data }) => (
   <Document>
     {Array.from({ length: Math.ceil(data.length / 2) }).map((_, pageIndex) => (
-      <Page key={pageIndex} size="A4" style={styles.page}>
+      <Page key={pageIndex}  orientation="landscape" size="A4" style={styles.page}>
         <SlipTemplate data={data[pageIndex * 2]} />
         {data[pageIndex * 2 + 1] && (
           <SlipTemplate data={data[pageIndex * 2 + 1]} />

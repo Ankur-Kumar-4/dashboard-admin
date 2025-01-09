@@ -13,6 +13,10 @@ const ApiEndPoints = {
   updateOrder: `${prod}/orders`,
   updateOrderStatus: `${prod}/order_received_update`,
   logout: `${prod}/logout`,
+  getproducts: `${prod}/products`,
+  addproduct: `${prod}/products`,
+  updateproduct: `${prod}/products`,
+  deleteproduct: `${prod}/products`,
 };
 
 export default ApiEndPoints;

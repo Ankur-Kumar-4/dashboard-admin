@@ -228,9 +228,7 @@ export default function OrderTable({ data, getOrders }) {
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
               Enquiry Made on
               </TableHead>
-              <TableHead className="bg-green-600 text-white" rowSpan={2}>
-                Payment Status
-              </TableHead>
+            
               <TableHead className="bg-green-600 text-white" rowSpan={2}>
               Payment Made On
               </TableHead>
@@ -401,9 +399,7 @@ export default function OrderTable({ data, getOrders }) {
 <TableCell className="text-xs min-w-[100px]">
   {order.enquiry_made_on}
 </TableCell>
-<TableCell className="text-xs min-w-[100px]">
-  {order.payment_status}
-</TableCell>
+
 <TableCell className="text-xs min-w-[100px]">
   {order.payment_made_on}
 </TableCell>
