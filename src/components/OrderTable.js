@@ -41,7 +41,7 @@ import {
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-export default function OrderTable({ data, getOrders }) {
+export default function OrderTable({ data, getOrders,permissions }) {
   const [isOpenStatus, setIsOpenStatus] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
@@ -117,6 +117,7 @@ export default function OrderTable({ data, getOrders }) {
       toast({ title: "Error deleting order", variant: "destructive" });
     }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
     const { dispatchStatus, receivedStatus, enquiryDate, through, docketNo } = formState;
@@ -339,9 +340,13 @@ export default function OrderTable({ data, getOrders }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(order)}>
-                        Edit Order
-                      </DropdownMenuItem>
+                      {permissions === "D Boy" ? (
+                        ""
+                      ) : (
+                        <DropdownMenuItem onClick={() => handleEdit(order)}>
+                          Edit Order
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem
                         onClick={() => {
                           setIsOpenStatus(true);
@@ -350,7 +355,15 @@ export default function OrderTable({ data, getOrders }) {
                       >
                         Delivery Agent
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Management Team</DropdownMenuItem>
+                      {permissions === "D Boy" ? (
+                        ""
+                      ) : (
+                        <DropdownMenuItem>Management Team</DropdownMenuItem>
+                      )}
+                      {permissions === "D Boy" ? (
+                        ""
+                      ) : (
+                   
                       <DropdownMenuItem
                         onClick={() => {
                           setIsDeleteDialogOpen(true);
@@ -359,6 +372,7 @@ export default function OrderTable({ data, getOrders }) {
                       >
                         Delete
                       </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

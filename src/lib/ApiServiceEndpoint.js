@@ -17,6 +17,7 @@ const ApiEndPoints = {
   addproduct: `${prod}/products`,
   updateproduct: `${prod}/products`,
   deleteproduct: `${prod}/products`,
+  getpermission: `${prod}/users/me`,
 };
 
 export default ApiEndPoints;

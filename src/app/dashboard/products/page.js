@@ -20,8 +20,26 @@ export function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [permissions, setPermissions] = useState("");
 
-
+  const getPermission = async () => {
+    try {
+      setIsLoading(true);
+      const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = response.data;
+      setPermissions(data.role);
+      console.log(data.role);
+      return data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getProducts = async () => {
     try {
@@ -87,6 +105,7 @@ export function ProductsPage() {
 
   useEffect(() => {
     getProducts()
+    getPermission();
   }, [])
   return (
     <div className="container mx-auto  px-4">
