@@ -11,20 +11,25 @@ import {
   TableRow 
 } from "@/components/ui/table"
 import { ProductForm } from '@/components/Product-form'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import ApiService from '@/lib/ApiServiceFunction'
 import ApiEndPoints from '@/lib/ApiServiceEndpoint'
+import { toast } from '@/hooks/use-toast'
 
 export function ProductsPage() {
   const [products, setProducts] = useState([])
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoading2, setIsLoading2] = useState(false)
   const [permissions, setPermissions] = useState("")
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [productIdToDelete, setProductIdToDelete] = useState(null)
+
 
   const getPermission = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading2(true)
       const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -37,7 +42,7 @@ export function ProductsPage() {
     } catch (error) {
       console.error(error)
     } finally {
-      setIsLoading(false)
+      setIsLoading2(false)
     }
   }
 
@@ -51,44 +56,60 @@ export function ProductsPage() {
     } catch (error) {
       console.log(error)
     } finally {
+
       setIsLoading(false)
     }
   }
 
   const addProduct = async (product) => {
     try {
+      setIsLoading(true)
       const response = await ApiService.post(`${ApiEndPoints?.addproduct}`, product)
       const data = await response.data
       console.log(data)
+      toast({ title: "Product added successfully!", variant: "success" })
+      setIsLoading(false)
+
       getProducts()
     } catch (error) {
       console.log(error)
     } finally {
+      setIsLoading(false)
       setIsFormOpen(false)
     }
   }
 
   const updateProduct = async (updatedProduct) => {
     try {
+      setIsLoading(true)
       const response = await ApiService.put(`${ApiEndPoints?.updateproduct}/${updatedProduct.id}`, updatedProduct)
       const data = await response.data
       console.log(data)
+      toast({ title: "Product updated successfully!", variant: "success" })
+      setIsLoading(false)
       getProducts()
     } catch (error) {
       console.log(error)
     } finally {
+      setIsLoading(false)
       setIsFormOpen(false)
     }
   }
 
   const deleteProduct = async (id) => {
     try {
-      const response = await ApiService.delete(`${ApiEndPoints?.deleteproduct}/${id}`)
+      setIsLoading(true)
+      const response = await ApiService.delete(`${ApiEndPoints?.deleteproduct}/${productIdToDelete}`)
       const data = await response.data
       console.log(data)
+      toast({ title: "Product deleted successfully!", variant: "success" })
+      setIsLoading(false)
       getProducts()
+     
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsDeleteDialogOpen(false)
     }
   }
 
@@ -100,7 +121,7 @@ export function ProductsPage() {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading2 ? (
         <div className="flex items-center justify-center mt-10">
           <svg
             className="animate-spin h-16 w-16 text-blue-500"
@@ -129,7 +150,7 @@ export function ProductsPage() {
             <div className="container mx-auto px-4">
               <div className="rounded-lg mb-4">
                 <Button
-                  onClick={() => setIsFormOpen(true)}
+                  onClick={() =>{ setIsFormOpen(true); setEditingProduct(null) }}
                   className="bg-green-500 hover:bg-green-600 text-white"
                 >
                   Add New Product
@@ -164,7 +185,10 @@ export function ProductsPage() {
                             </Button>
                             <Button
                               variant="destructive"
-                              onClick={() => deleteProduct(product.id)}
+                              onClick={() => {
+                                setIsDeleteDialogOpen(true)
+                                setProductIdToDelete(product.id)
+                              }}
                               className="bg-red-500 hover:bg-red-600 text-white"
                             >
                               Delete
@@ -215,6 +239,24 @@ export function ProductsPage() {
                   />
                 </DialogContent>
               </Dialog>
+              <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => deleteProduct()}>
+              {isLoading ? "Deleting..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
             </div>
           ) : (
             <div className="flex items-center justify-center mt-10">

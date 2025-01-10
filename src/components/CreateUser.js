@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Loader2 } from "lucide-react"
 
-export default function NewUserForm({ isOpen, onClose, onSubmit, isLoading2  }) {
+export default function NewUserForm({ isOpen, onClose, onSubmit, isLoading }) {
   const [userData, setUserData] = useState({
     email: '',
     username: '',
@@ -123,7 +123,7 @@ export default function NewUserForm({ isOpen, onClose, onSubmit, isLoading2  }) 
           </div>
           <DialogFooter>
             <Button type="submit">
-              {isLoading2 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Create User"}
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Create User"}
             </Button>
           </DialogFooter>
         </form>

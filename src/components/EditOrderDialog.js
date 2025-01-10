@@ -23,27 +23,54 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const updatedData = { ...prev, [name]: value };
+      if (['shipping_charges', 'discount'].includes(name)) {
+        updatedData.total_amount = calculateTotalAmount(updatedData);
+      }
+      return updatedData;
+    });
   };
 
   const handleMedicineChange = (index, field, value) => {
     const updatedMedicines = [...formData.medicines];
     updatedMedicines[index] = { ...updatedMedicines[index], [field]: value };
-    setFormData((prev) => ({ ...prev, medicines: updatedMedicines }));
+    setFormData((prev) => {
+      const updatedData = { ...prev, medicines: updatedMedicines };
+      updatedData.total_amount = calculateTotalAmount(updatedData);
+      return updatedData;
+    });
   };
 
   const handleAddMedicine = () => {
-    setFormData((prev) => ({
-      ...prev,
-      medicines: [...(prev.medicines || []), { name: "", mrp: 0, qty: 0 }],
-    }));
+    setFormData((prev) => {
+      const updatedData = {
+        ...prev,
+        medicines: [...(prev.medicines || []), { name: "", mrp: 0, qty: 0 }],
+      };
+      updatedData.total_amount = calculateTotalAmount(updatedData);
+      return updatedData;
+    });
   };
 
   const handleRemoveMedicine = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      medicines: prev.medicines.filter((_, i) => i !== index),
-    }));
+    setFormData((prev) => {
+      const updatedData = {
+        ...prev,
+        medicines: prev.medicines.filter((_, i) => i !== index),
+      };
+      updatedData.total_amount = calculateTotalAmount(updatedData);
+      return updatedData;
+    });
+  };
+
+  const calculateTotalAmount = (data) => {
+    const itemsTotal = data.medicines?.reduce((total, medicine) => {
+      return total + (Number(medicine.mrp) * Number(medicine.qty));
+    }, 0) || 0;
+    const shippingCharges = Number(data.shipping_charges) || 0;
+    const discount = Number(data.discount) || 0;
+    return itemsTotal + shippingCharges - discount;
   };
 
   const handleSubmit = (e) => {
@@ -66,7 +93,7 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                   id="date"
                   name="date"
                   type="date"
-                  value={formData.date}
+                  value={formData.date ? formData.date.split('T')[0] : ''}
                   onChange={handleChange}
                 />
               </div>
@@ -162,18 +189,6 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                 />
               </div>
               <div>
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  name="amount"
-                  type="number"
-                  value={formData.amount}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
                 <Label htmlFor="discount">Discount</Label>
                 <Input
                   id="discount"
@@ -183,16 +198,16 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                   onChange={handleChange}
                 />
               </div>
-              <div>
-                <Label htmlFor="total_amount">Total Amount</Label>
-                <Input
-                  id="total_amount"
-                  name="total_amount"
-                  type="number"
-                  value={formData.total_amount}
-                  onChange={handleChange}
-                />
-              </div>
+            </div>
+            <div>
+              <Label htmlFor="total_amount">Total Amount</Label>
+              <Input
+                id="total_amount"
+                name="total_amount"
+                type="number"
+                value={formData.total_amount}
+                readOnly
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -222,7 +237,7 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                 <Input
                   id="mode_of_payment"
                   name="mode_of_payment"
-                  value={formData?.mode_of_payment}
+                  value={formData.mode_of_payment}
                   onChange={handleChange}
                 />
               </div>
@@ -236,7 +251,6 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                 />
               </div>
             </div>
-            
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>

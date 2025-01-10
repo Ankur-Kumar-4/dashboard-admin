@@ -36,7 +36,7 @@ export default function UserManagement() {
   };
   const getPermission = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading2(true);
       const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -49,7 +49,7 @@ export default function UserManagement() {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsLoading2(false);
     }
   };
 useEffect(() => {
@@ -66,13 +66,13 @@ useEffect(() => {
       toast({
         title: "User Created Successfully",
       });
-      setIsLoading2(false);
+      setIsLoading(false);
       getUsers();
      
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading2(false);
+      setIsLoading(false);
     }
   }
   
@@ -159,7 +159,7 @@ useEffect(() => {
                 isOpen={isNewUserFormOpen}
                 onClose={() => setIsNewUserFormOpen(false)}
                 onSubmit={handleNewUserSubmit}
-                isLoading={isLoading2}
+                isLoading={isLoading}
               />
             </div>
           ) : (

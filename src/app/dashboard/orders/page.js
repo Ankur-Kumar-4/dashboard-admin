@@ -9,6 +9,7 @@ import MedicineTable from "@/components/OrderTable";
 
 const OrdersTable = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const [data, setData] = useState([]);
   const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0]);
   const [toDate, setToDate] = useState("");
@@ -57,7 +58,7 @@ const OrdersTable = () => {
   };
 const getPermission = async () => {
   try {
-      
+    setIsLoading2(true)
     const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -71,7 +72,7 @@ const getPermission = async () => {
   } catch (error) {
     console.log(error);
   } finally {
-
+    setIsLoading2(false)
   }
 };
   useEffect(() => {
@@ -85,7 +86,7 @@ const getPermission = async () => {
 
   return (
     <>
-    {!isLoading ? (
+    {!isLoading2 ? (
       <>
       {permissions === "Admin" || permissions === "Order Book" || permissions === "Delivery Agent" ? (
         <div className="mx-auto w-[95vw]">

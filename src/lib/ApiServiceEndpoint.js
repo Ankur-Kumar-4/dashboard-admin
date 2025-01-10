@@ -9,6 +9,8 @@ const ApiEndPoints = {
   getusers: `${prod}/users`,
   resetpassword: `${prod}/users`,
   updateuser: `${prod}/users`,
+  deleteUser: `${prod}/users`,
+  userstatus: `${prod}/users`,
   deleteOrder: `${prod}/orders`,
   updateOrder: `${prod}/orders`,
   updateOrderStatus: `${prod}/order_received_update`,
@@ -18,6 +20,7 @@ const ApiEndPoints = {
   updateproduct: `${prod}/products`,
   deleteproduct: `${prod}/products`,
   getpermission: `${prod}/users/me`,
+
 };
 
 export default ApiEndPoints;

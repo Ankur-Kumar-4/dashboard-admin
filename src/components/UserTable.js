@@ -35,10 +35,12 @@ export default function UserTable({
   const [isOpen2, setIsOpen2] = useState(false);
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [resetPasswordData, setResetPasswordData] = useState({
     current_password: "",
     new_password: "",
   });
+  
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const { toast } = useToast()
 
@@ -181,6 +183,47 @@ export default function UserTable({
         })
     : [];
 
+    const handleDeleteUser = async () => {
+      try {
+        setIsLoading(true);
+      const response =  await ApiService.delete(`${ApiEndPoints.deleteUser}/${userId}`);
+        toast({
+          title: "Success",
+          description: "User deleted successfully!",
+          variant: "default",
+        });
+        setIsDeleteDialogOpen(false);
+        getUsers();
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        toast({ title: "An unexpected error occurred. Please try again.", variant: "destructive" });
+        setIsLoading(false);
+      }
+    };
+    const handleUserStatus = async (userId, isEnabled) => {
+      try {
+        setIsLoading(true);
+        const response = await ApiService.put(`${ApiEndPoints.userstatus}/${userId}/status?disabled=${isEnabled}`);
+        toast({
+          title: "Success",
+          description: 'User status updated successfully!',
+          variant: "default",
+        });
+        getUsers(); // Refresh the user list
+      } catch (error) {
+        console.error("Error updating user status:", error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    
   return (
     <div className="rounded-md border">
       <Table>
@@ -216,7 +259,18 @@ export default function UserTable({
       <TableCell>{user?.full_name || "N/A"}</TableCell>
       <TableCell>{user?.role || "N/A"}</TableCell>
       <TableCell>
-        <Switch checked={user?.disabled || false} />
+      <Switch
+  onCheckedChange={(checked) => {
+    handleUserStatus(user._id, checked);
+    const updatedUser = { ...user, disabled: !checked }; // Update local state for immediate feedback
+    const updatedUsers = tableData.map((u) =>
+      u._id === user._id ? updatedUser : u
+    );
+  }}
+  checked={user?.disabled}
+/>
+
+
       </TableCell>
       <TableCell className="flex gap-5">
         <Pencil
@@ -229,7 +283,7 @@ export default function UserTable({
           className="hover:text-blue-500 cursor-pointer"
           size={16}
         />
-        <Trash2 className="hover:text-red-500 cursor-pointer" size={16} />
+        <Trash2 className="hover:text-red-500 cursor-pointer" onClick={() => {setIsDeleteDialogOpen(true); setUserId(user._id); }} size={16} />
         <RefreshCcw
           onClick={() => {
             setIsOpen(true);
@@ -368,6 +422,24 @@ export default function UserTable({
         )}
       </DialogFooter>
     </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() =>  handleDeleteUser  ()}>
+              {isLoading ? "Deleting..." : "Confirm"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
