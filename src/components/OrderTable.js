@@ -45,16 +45,15 @@ export default function OrderTable({ data, getOrders,permissions }) {
   const [isOpenStatus, setIsOpenStatus] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [receivedStatus, setReceivedStatus] = useState("");
-  const [dispatchStatus, setDispatchStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [formState, setFormState] = useState({
-    dispatchStatus: "",
-    receivedStatus: "option-one", // Default selected value
-    enquiryDate: "",
+    dispatch_status: "",
+    received_status: "delivered", // Default selected value
+    enquiry_date: "",
     through: "", // Additional field for dispatched status
-    docketNo: "", // Additional field for dispatched status
+    awb_docket_no: "", // Additional field for dispatched status
   });
 
   const handleInputChange = (e) => {
@@ -75,7 +74,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
   const handleRadioChange = (value) => {
     setFormState((prev) => ({
       ...prev,
-      receivedStatus: value,
+      received_status: value,
     }));
   };
 
@@ -102,43 +101,55 @@ export default function OrderTable({ data, getOrders,permissions }) {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
     const year = date.getFullYear();
-    return `${month}-${day}-${year}`;
+    return `${day}-${month}-${year}`;
   };
 
   const handleDelete = async () => {
     try {
+      setIsLoading(true);
       const response = await ApiService.delete(
         `${ApiEndPoints?.deleteOrder}/${orderId}`
       );
       toast({ title: "Order deleted successfully!", variant: "success" });
       setIsDeleteDialogOpen(false);
       getOrders();
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       toast({ title: "Error deleting order", variant: "destructive" });
     }
   };
   
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
-    const { dispatchStatus, receivedStatus, enquiryDate, through, docketNo } = formState;
+    const { dispatch_status, received_status, enquiry_date, through, awb_docket_no } = formState;
 
     // Build the status object
     const status = {
-      dispatch_status: dispatchStatus,
-      received_status: receivedStatus,
-      enquiry_date: enquiryDate,
-      ...(dispatchStatus === "dispatched" && { through, docket_no: docketNo }),
+      dispatch_status: dispatch_status,
+      received_status:
+        received_status === "estimated"
+          ? `Estimated Delivery Date ${enquiry_date}`
+          : `Delivered On ${enquiry_date}`,
+      enquiry_date: enquiry_date,
+      ...(dispatch_status === "dispatched" && { through, awb_docket_no: awb_docket_no }),
     };
 
     try {
-      await handleOrderStatusSubmit(orderId, status); // Submit the form data
+      setIsLoading(true);
+     const response = await ApiService.put(
+        `${ApiEndPoints?.updateOrderStatus}/${orderId}`,
+        status
+      );
       toast({
         title: "Order status updated successfully!",
         variant: "success",
       });
       setIsOpenStatus(false);
       getOrders(); // Refresh the order list
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setIsOpenStatus(false);
       toast({
         title: "Error updating order status",
@@ -151,14 +162,17 @@ export default function OrderTable({ data, getOrders,permissions }) {
 
   const handleEditSubmit = async (updatedOrder) => {
     try {
+      setIsLoading(true);
       const response = await ApiService.put(
         `${ApiEndPoints?.updateOrder}/${updatedOrder.id}`,
         updatedOrder
       );
       toast({ title: "Order updated successfully!", variant: "success" });
       setIsEditDialogOpen(false);
+      setIsLoading(false);
       getOrders();
     } catch (error) {
+      setIsLoading(false);
       toast({ title: "Error updating order", variant: "destructive" });
     }
   };
@@ -190,7 +204,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                 }}
                 rowSpan={2}
               >
-                Field No.
+                Bill No.
               </TableHead>
               <TableHead
                 className="sticky left-0 bg-green-600 text-white border-r z-50"
@@ -232,7 +246,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                 className="sticky left-[400px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "556px",
+                  left: "547px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "120px",
                 }}
@@ -244,7 +258,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                 className="sticky left-[600px] bg-green-600 text-white border-r z-50"
                 style={{
                   position: "sticky",
-                  left: "755px",
+                  left: "747px",
                   boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                   minWidth: "80px",
                 }}
@@ -340,10 +354,10 @@ export default function OrderTable({ data, getOrders,permissions }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      {permissions === "D Boy" ? (
+                      {permissions === "Delivery Agent" ? (
                         ""
                       ) : (
-                        <DropdownMenuItem onClick={() => handleEdit(order)}>
+                        <DropdownMenuItem onClick={() => {setIsEditDialogOpen(true);setEditingOrder(order)}}>
                           Edit Order
                         </DropdownMenuItem>
                       )}
@@ -353,14 +367,10 @@ export default function OrderTable({ data, getOrders,permissions }) {
                           setOrderId(order.id);
                         }}
                       >
-                        Delivery Agent
+                        Update Delivery Status
                       </DropdownMenuItem>
-                      {permissions === "D Boy" ? (
-                        ""
-                      ) : (
-                        <DropdownMenuItem>Management Team</DropdownMenuItem>
-                      )}
-                      {permissions === "D Boy" ? (
+                     
+                      {permissions === "Delivery Agent" ? (
                         ""
                       ) : (
                    
@@ -424,7 +434,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                   className="sticky left-[300px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "556px",
+                    left: "547px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "200px",
                   }}
@@ -435,7 +445,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                   className="sticky left-[600px] bg-blue-50 border-r z-30"
                   style={{
                     position: "sticky",
-                    left: "755px",
+                    left: "747px",
                     boxShadow: "2px 0 4px rgba(0,0,0,0.1)",
                     minWidth: "80px",
                   }}
@@ -501,16 +511,16 @@ export default function OrderTable({ data, getOrders,permissions }) {
                 <TableCell className="text-xs min-w-[100px]">
                   {order.dispatch_status}
                 </TableCell>
-                <TableCell className="text-xs min-w-[100px]">
+                <TableCell className="text-xs min-w-[120px]">
                   {order.received_status}
                 </TableCell>
                 <TableCell className="text-xs min-w-[100px]">
                   {order.through}
                 </TableCell>
-                <TableCell className="text-xs min-w-[100px]">
+                <TableCell className="text-xs min-w-[120px]">
                   {order.awb_docket_no}
                 </TableCell>
-                <TableCell className="text-xs min-w-[100px]">
+                <TableCell className="text-xs min-w-[130px]">
                   {order.missing_product_during_dispatch}
                 </TableCell>
                 <TableCell className="text-xs min-w-[100px]">
@@ -551,13 +561,13 @@ export default function OrderTable({ data, getOrders,permissions }) {
   <div className="grid gap-4 py-4">
     {/* Dispatch Status */}
     <div className="grid grid-cols-1 items-center gap-4">
-      <Label htmlFor="dispatchStatus" className="text-left">
+      <Label htmlFor="dispatch_status" className="text-left">
         Dispatch Status
       </Label>
       <Select
-        name="dispatchStatus"
-        value={formState.dispatchStatus}
-        onValueChange={(value) => handleSelectChange("dispatchStatus", value)}
+        name="dispatch_status"
+        value={formState.dispatch_status}
+        onValueChange={(value) => handleSelectChange("dispatch_status", value)}
         className="rounded-md border border-input px-3 py-2 w-full"
       >
         <SelectTrigger>
@@ -571,7 +581,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
     </div>
 
     {/* Additional Fields for Dispatched Status */}
-    {formState.dispatchStatus === "dispatched" && (
+    {formState.dispatch_status === "dispatched" && (
       <>
         <div className="space-y-2">
           <Label htmlFor="through">Through</Label>
@@ -585,12 +595,12 @@ export default function OrderTable({ data, getOrders,permissions }) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="docketNo">AWB / Docket No.</Label>
+          <Label htmlFor="awb_docket_no">AWB / Docket No.</Label>
           <Input
-            id="docketNo"
-            name="docketNo"
+            id="awb_docket_no"
+            name="awb_docket_no"
             type="text"
-            value={formState.docketNo}
+            value={formState.awb_docket_no}
             onChange={handleInputChange}
             className="rounded-md border border-input px-3 py-2 w-full"
           />
@@ -600,38 +610,36 @@ export default function OrderTable({ data, getOrders,permissions }) {
 
     {/* Received Status */}
     <div className="grid grid-cols-1 items-center gap-4">
-      <Label htmlFor="receivedStatus" className="text-left">
+      <Label htmlFor="received_status" className="text-left">
         Received Status
       </Label>
     </div>
     <RadioGroup
-      value={formState.receivedStatus}
+      value={formState.received_status}
       onValueChange={handleRadioChange}
     >
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-one" id="option-one" />
-        <Label htmlFor="option-one">Delivered</Label>
+        <RadioGroupItem value="delivered" id="delivered" />
+        <Label htmlFor="delivered">Delivered</Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-two" id="option-two" />
-        <Label htmlFor="option-two">Estimated</Label>
+        <RadioGroupItem value="estimated" id="estimated" />
+        <Label htmlFor="estimated">Estimated</Label>
       </div>
-    </RadioGroup>
-
-    {/* Enquiry Date */}
-    <div className="space-y-2">
-      <Label htmlFor="enquiryDate">Enquiry Date</Label>
       <Input
-        id="enquiryDate"
-        name="enquiryDate"
+        id="enquiry_date"
+        name="enquiry_date"
         type="date"
-        value={formState.enquiryDate}
+        value={formState.enquiry_date}
         onChange={handleInputChange}
       />
-    </div>
+    </RadioGroup>
+
+
+
   </div>
   <DialogFooter>
-    <Button type="submit">Submit</Button>
+    <Button type="submit">{isLoading ? "Submitting..." : "Submit"}</Button>
   </DialogFooter>
 </form>
   
@@ -642,6 +650,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
         onOpenChange={setIsEditDialogOpen}
         order={editingOrder}
         onSubmit={handleEditSubmit}
+        isLoading={isLoading}
       />
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -656,7 +665,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
               Cancel
             </Button>
             <Button variant="destructive" onClick={() => handleDelete()}>
-              Confirm
+              {isLoading ? "Deleting..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from 'lucide-react';
 
-export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit }) {
+export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoading }) {
   const [formData, setFormData] = useState(order || {});
 
   useEffect(() => {
@@ -222,7 +222,7 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit }) {
                 <Input
                   id="mode_of_payment"
                   name="mode_of_payment"
-                  value={formData.mode_of_payment}
+                  value={formData?.mode_of_payment}
                   onChange={handleChange}
                 />
               </div>
@@ -239,7 +239,9 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit }) {
             
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save changes"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

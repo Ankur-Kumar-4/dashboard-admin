@@ -15,11 +15,11 @@ const OrdersTable = () => {
   const [noDataFound, setNoDataFound] = useState(false);
   const [permissions, setPermissions] = useState("");
 
+
   const getOrders = async (filterParams = {}) => {
     try {
       setIsLoading(true);
       setNoDataFound(false);
-
       const formatDate = (date) => {
         if (!date) return null;
         const [year, month, day] = date.split("-");
@@ -52,12 +52,12 @@ const OrdersTable = () => {
       setData([]);
       setNoDataFound(true);
       setIsLoading(false);
-      console.error(error);
+      console.log(error);
     }
   };
 const getPermission = async () => {
   try {
-    setIsLoading(true);
+      
     const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -65,28 +65,29 @@ const getPermission = async () => {
     });
     const data = response.data;
     setPermissions(data.role);
+    setUserName(data.name);
     console.log(data.role);
     return data;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   } finally {
-    setIsLoading(false);
+
   }
 };
   useEffect(() => {
     getPermission();
-    getOrders(); // Fetch default orders on mount with today's from_date
+    getOrders(); 
   }, []);
 
   const handleFilter = () => {
-    getOrders({ fromDate, toDate }); // Fetch filtered orders
+    getOrders({ fromDate, toDate }); 
   };
 
   return (
     <>
     {!isLoading ? (
       <>
-      {permissions === "Admin" || permissions === "Order Book" ? (
+      {permissions === "Admin" || permissions === "Order Book" || permissions === "Delivery Agent" ? (
         <div className="mx-auto w-[95vw]">
           <div className="flex items-center w-80 gap-4 mb-4">
             <Input

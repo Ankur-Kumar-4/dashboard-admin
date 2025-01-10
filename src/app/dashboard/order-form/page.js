@@ -12,6 +12,7 @@ import Select from "react-select";
 import { toast } from "@/hooks/use-toast";
 
 export default function OrderForm() {
+
   const [formData, setFormData] = useState({
     date: "",
     patient_name: "",
@@ -26,6 +27,7 @@ export default function OrderForm() {
     enquiry_made_on: new Date().toISOString().split("T")[0],
     payment_made_on: new Date().toISOString().split("T")[0],
     payment_reconciliation_status: "",
+    remarks: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -206,8 +208,29 @@ export default function OrderForm() {
 
     setErrors((prev) => ({ ...prev, [`medicine_${index}_name`]: '' }));
   };
-
+  const getPermission = async () => {
+    try {
+        
+      const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const data = response.data;
+      setFormData((prev) => ({
+        ...prev,
+        remarks: data.full_name,
+      }));
+      console.log(data.full_name);
+      return data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+  
+    }
+  };
   useEffect(() => {
+    getPermission();
     getMedicines();
   }, []);
 

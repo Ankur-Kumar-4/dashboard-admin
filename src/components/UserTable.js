@@ -213,8 +213,8 @@ export default function UserTable({
     <TableRow key={user._id}>
       <TableCell>{user?.email || "N/A"}</TableCell>
       <TableCell>{user?.username || "N/A"}</TableCell>
-      <TableCell>{user?.role || "N/A"}</TableCell>
       <TableCell>{user?.full_name || "N/A"}</TableCell>
+      <TableCell>{user?.role || "N/A"}</TableCell>
       <TableCell>
         <Switch checked={user?.disabled || false} />
       </TableCell>

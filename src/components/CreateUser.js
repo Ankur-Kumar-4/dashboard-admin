@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Loader2 } from "lucide-react"
 
-export default function NewUserForm({ isOpen, onClose, onSubmit  }) {
+export default function NewUserForm({ isOpen, onClose, onSubmit, isLoading2  }) {
   const [userData, setUserData] = useState({
     email: '',
     username: '',
@@ -121,7 +122,9 @@ export default function NewUserForm({ isOpen, onClose, onSubmit  }) {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Create User</Button>
+            <Button type="submit">
+              {isLoading2 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Create User"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
