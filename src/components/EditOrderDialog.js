@@ -17,7 +17,10 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
 
   useEffect(() => {
     if (order) {
-      setFormData(order);
+      setFormData({
+        ...order,
+        discount: order.discount || 0
+      });
     }
   }, [order]);
 
@@ -64,13 +67,23 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
     });
   };
 
-  const calculateTotalAmount = (data) => {
-    const itemsTotal = data.medicines?.reduce((total, medicine) => {
+  const calculateSubtotal = (medicines) => {
+    return medicines?.reduce((total, medicine) => {
       return total + (Number(medicine.mrp) * Number(medicine.qty));
     }, 0) || 0;
+  };
+
+  const calculateDiscountAmount = (data) => {
+    const subtotal = calculateSubtotal(data.medicines);
+    const discountPercentage = Number(data.discount) || 0;
+    return (subtotal * discountPercentage) / 100;
+  };
+
+  const calculateTotalAmount = (data) => {
+    const subtotal = calculateSubtotal(data.medicines);
     const shippingCharges = Number(data.shipping_charges) || 0;
-    const discount = Number(data.discount) || 0;
-    return itemsTotal + shippingCharges - discount;
+    const discountAmount = calculateDiscountAmount(data);
+    return subtotal + shippingCharges - discountAmount;
   };
 
   const handleSubmit = (e) => {
@@ -189,25 +202,17 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                 />
               </div>
               <div>
-                <Label htmlFor="discount">Discount</Label>
+                <Label htmlFor="discount">Discount (%)</Label>
                 <Input
                   id="discount"
                   name="discount"
                   type="number"
+                  min="0"
+                  max="100"
                   value={formData.discount}
                   onChange={handleChange}
                 />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="total_amount">Total Amount</Label>
-              <Input
-                id="total_amount"
-                name="total_amount"
-                type="number"
-                value={formData.total_amount}
-                readOnly
-              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -249,6 +254,24 @@ export function EditOrderDialog({ isOpen, onOpenChange, order, onSubmit, isLoadi
                   value={formData.payment_reconciliation_status}
                   onChange={handleChange}
                 />
+              </div>
+            </div>
+            <div className="mt-6 space-y-2 border-t pt-4">
+              <div className="flex justify-between text-sm">
+                <span>Subtotal:</span>
+                <span>₹{calculateSubtotal(formData.medicines).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Shipping:</span>
+                <span>₹{(Number(formData.shipping_charges) || 0).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Discount ({formData.discount}%):</span>
+                <span>₹{calculateDiscountAmount(formData).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <span>Total:</span>
+                <span>₹{calculateTotalAmount(formData).toFixed(2)}</span>
               </div>
             </div>
           </div>

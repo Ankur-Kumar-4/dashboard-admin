@@ -6,6 +6,7 @@ import ApiService from "@/lib/ApiServiceFunction";
 import ApiEndPoints from "@/lib/ApiServiceEndpoint";
 import PDFGenerator from "@/components/pdfGenerate/PdfGenerator";
 import MedicineTable from "@/components/OrderTable";
+import ExcelGenerate from "@/components/ExcelGenerate";
 
 const OrdersTable = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -105,6 +106,7 @@ const getPermission = async () => {
             />
             <Button onClick={handleFilter}>Find</Button>
             <PDFGenerator data={data} />
+            <ExcelGenerate data={data}/>
           </div>
 
           {!isLoading ? (

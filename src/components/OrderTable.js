@@ -490,7 +490,7 @@ export default function OrderTable({ data, getOrders,permissions }) {
                   ₹{order.amount}
                 </TableCell>
                 <TableCell className="text-center text-xs min-w-[100px]">
-                  ₹{order.discount}
+                  {order.discount}%
                 </TableCell>
                 <TableCell className="text-center text-xs min-w-[100px]">
                   ₹{order.total_amount}

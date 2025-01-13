@@ -12,7 +12,6 @@ import Select from "react-select";
 import { toast } from "@/hooks/use-toast";
 
 export default function OrderForm() {
-
   const [formData, setFormData] = useState({
     date: "",
     patient_name: "",
@@ -36,7 +35,7 @@ export default function OrderForm() {
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const calculateTotals = (medicines, shipping, discount) => {
+  const calculateTotals = (medicines, shipping, discountPercentage) => {
     const subtotal = medicines.reduce((sum, med) => {
       const mrp = parseFloat(med.mrp) || 0;
       const qty = parseFloat(med.qty) || 0;
@@ -44,10 +43,11 @@ export default function OrderForm() {
     }, 0);
 
     const shippingValue = parseFloat(shipping) || 0;
-    const discountValue = parseFloat(discount) || 0;
-    const total = subtotal + shippingValue - discountValue;
+    const discountPercentageValue = parseFloat(discountPercentage) || 0;
+    const discountAmount = (subtotal * discountPercentageValue) / 100;
+    const total = subtotal + shippingValue - discountAmount;
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       amount: subtotal,
       total_amount: total,
@@ -64,14 +64,14 @@ export default function OrderForm() {
       ...updatedMedicines[index],
       [field]: value,
     };
-    setFormData((prev) => ({ ...prev, medicines: updatedMedicines }));
+    setFormData(prev => ({ ...prev, medicines: updatedMedicines }));
     calculateTotals(
       updatedMedicines,
       formData.shipping_charges,
       formData.discount
     );
 
-    setErrors((prev) => ({
+    setErrors(prev => ({
       ...prev,
       [`medicine_${index}_${field}`]: '',
     }));
@@ -82,7 +82,7 @@ export default function OrderForm() {
       return;
     }
 
-    setFormData((prev) => {
+    setFormData(prev => {
       const newState = { ...prev, [field]: value };
       calculateTotals(
         prev.medicines,
@@ -92,11 +92,11 @@ export default function OrderForm() {
       return newState;
     });
 
-    setErrors((prev) => ({ ...prev, [field]: '' }));
+    setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   const addMedicine = () => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       medicines: [...prev.medicines, { name: "", mrp: "", qty: "" }],
     }));
@@ -104,7 +104,7 @@ export default function OrderForm() {
 
   const removeMedicine = (index) => {
     const updatedMedicines = formData.medicines.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, medicines: updatedMedicines }));
+    setFormData(prev => ({ ...prev, medicines: updatedMedicines }));
     calculateTotals(
       updatedMedicines,
       formData.shipping_charges,
@@ -191,7 +191,7 @@ export default function OrderForm() {
   const getMedicinePrice = (med, index) => {
     if (!med) return;
     const price = medicines?.find((item) => item.name === med.value)?.price;
-    setFormData((prev) => {
+    setFormData(prev => {
       const updatedMedicines = [...prev.medicines];
       updatedMedicines[index] = {
         ...updatedMedicines[index],
@@ -206,18 +206,18 @@ export default function OrderForm() {
       formData.discount
     );
 
-    setErrors((prev) => ({ ...prev, [`medicine_${index}_name`]: '' }));
+    setErrors(prev => ({ ...prev, [`medicine_${index}_name`]: '' }));
   };
+
   const getPermission = async () => {
     try {
-        
       const response = await ApiService.get(`${ApiEndPoints?.getpermission}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       const data = response.data;
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         remarks: data.full_name,
       }));
@@ -225,10 +225,9 @@ export default function OrderForm() {
       return data;
     } catch (error) {
       console.log(error);
-    } finally {
-  
     }
   };
+
   useEffect(() => {
     getPermission();
     getMedicines();
@@ -245,11 +244,11 @@ export default function OrderForm() {
                 id="patient_name"
                 value={formData.patient_name}
                 onChange={(e) => {
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     patient_name: e.target.value,
                   }));
-                  setErrors((prev) => ({ ...prev, patient_name: '' }));
+                  setErrors(prev => ({ ...prev, patient_name: '' }));
                 }}
               />
               {errors.patient_name && <p className="text-red-500 text-sm mt-1">{errors.patient_name}</p>}
@@ -260,11 +259,11 @@ export default function OrderForm() {
                 id="mobile_no"
                 value={formData.mobile_no}
                 onChange={(e) => {
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     mobile_no: e.target.value,
                   }));
-                  setErrors((prev) => ({ ...prev, mobile_no: '' }));
+                  setErrors(prev => ({ ...prev, mobile_no: '' }));
                 }}
               />
               {errors.mobile_no && <p className="text-red-500 text-sm mt-1">{errors.mobile_no}</p>}
@@ -275,8 +274,8 @@ export default function OrderForm() {
                 id="address"
                 value={formData.address}
                 onChange={(e) => {
-                  setFormData((prev) => ({ ...prev, address: e.target.value }));
-                  setErrors((prev) => ({ ...prev, address: '' }));
+                  setFormData(prev => ({ ...prev, address: e.target.value }));
+                  setErrors(prev => ({ ...prev, address: '' }));
                 }}
               />
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
@@ -287,8 +286,8 @@ export default function OrderForm() {
                 id="pincode"
                 value={formData.pincode}
                 onChange={(e) => {
-                  setFormData((prev) => ({ ...prev, pincode: e.target.value }));
-                  setErrors((prev) => ({ ...prev, pincode: '' }));
+                  setFormData(prev => ({ ...prev, pincode: e.target.value }));
+                  setErrors(prev => ({ ...prev, pincode: '' }));
                 }}
               />
               {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
@@ -379,11 +378,12 @@ export default function OrderForm() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="discount">Discount</Label>
+              <Label htmlFor="discount">Discount (%)</Label>
               <Input
                 id="discount"
                 type="number"
                 min="0"
+                max="100"
                 value={formData.discount}
                 onChange={(e) => handleNumberInput("discount", e.target.value)}
               />
@@ -396,7 +396,7 @@ export default function OrderForm() {
                 type="date"
                 value={formData.enquiry_made_on}
                 onChange={(e) =>
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     enquiry_made_on: e.target.value,
                   }))
@@ -410,7 +410,7 @@ export default function OrderForm() {
                 type="date"
                 value={formData.payment_made_on}
                 onChange={(e) =>
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     payment_made_on: e.target.value,
                   }))
@@ -427,7 +427,7 @@ export default function OrderForm() {
                 type="text"
                 value={formData.payment_reconciliation_status}
                 onChange={(e) =>
-                  setFormData((prev) => ({
+                  setFormData(prev => ({
                     ...prev,
                     payment_reconciliation_status: e.target.value,
                   }))
@@ -464,8 +464,8 @@ export default function OrderForm() {
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span>Discount:</span>
-              <span>₹{(parseFloat(formData.discount) || 0).toFixed(2)}</span>
+              <span>Discount ({formData.discount}%):</span>
+              <span>₹{((parseFloat(formData.amount) * parseFloat(formData.discount) / 100) || 0).toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-semibold">
               <span>Total:</span>
